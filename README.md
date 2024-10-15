@@ -1,6 +1,6 @@
 # Pong Game using CS1Lib
 
-Implementing version of pong[http://www.youtube.com/watch?v=_tvTsbAXuRs] game in Python.
+Implementing version of [pong](http://www.youtube.com/watch?v=_tvTsbAXuRs) game in Python.
 
 # To do
 
