@@ -6,19 +6,26 @@ Purpose: Implement copy of Pong game using CS1Lib
 
 from cs1lib import *
 
-paddle_movement_height = 10
+# defining important variables
 
-screen_height = 400
-screen_width = 400
+UP_LEFT_KEY = "a"
+UP_RIGHT_KEY = "k"
+DOWN_LEFT_KEY = "z"
+DOWN_RIGHT_KEY = "m"
 
-paddle_width = 20
-paddle_height = 80
+PADDLE_MOVEMENT_HEIGHT = 10
+
+SCREEN_HEIGHT = 400
+SCREEN_WIDTH = 400
+
+PADDLE_WIDTH = 20
+PADDLE_HEIGHT = 80
 
 left_paddle_x = 0
 left_paddle_y = 0
 
-right_paddle_x = screen_width - paddle_width
-right_paddle_y = screen_height - paddle_height
+right_paddle_x = SCREEN_WIDTH - PADDLE_WIDTH
+right_paddle_y = SCREEN_HEIGHT - PADDLE_HEIGHT
 
 right_up = False
 right_down = False
@@ -26,134 +33,141 @@ right_down = False
 left_up = False
 left_down = False
 
-ball_radius = 10
-ball_x = screen_height/2
-ball_y = screen_height/2
+BALL_RADIUS = 10
+ball_x = SCREEN_HEIGHT/2
+ball_y = SCREEN_HEIGHT/2
 
 ball_direction_x = 1
 ball_direction_y = 1
-ball_velocity = 5
+BALL_VELOCITY = 5
 
 game_started = False
 show_text = True
 
 def main_draw():
-    global show_text
+    global show_text, BALL_VELOCITY
 
     clear()
+    set_clear_color(0,0,0)
 
     draw_paddles()
     move_paddles()
+
     draw_ball()
     move_ball()
-    set_clear_color(0,0,0)
-
+    
+    #checking to see if game is over and start text needs to be displayed
     if show_text:
         set_stroke_color(1,1,1)
         set_font_size(14)
-        draw_text("Press Spacebar to Start Game", screen_width/2 - 5.5*28, screen_height/2 - 100)
-
+        draw_text("Press Spacebar to Start Game", SCREEN_WIDTH/2 - 5.5*28, SCREEN_HEIGHT/2 - 100)
 
 def draw_ball():
-    global ball_x, ball_y, ball_radius
-    draw_circle(ball_x, ball_y, ball_radius)
+    global ball_x, ball_y, BALL_RADIUS
+    draw_circle(ball_x, ball_y, BALL_RADIUS)
 
 def move_ball():
-    global ball_x, ball_y, game_started, ball_radius, right_paddle_x, left_paddle_x, paddle_width, ball_velocity, ball_direction_x, ball_direction_y
+    global ball_x, ball_y, game_started, BALL_RADIUS, right_paddle_x, left_paddle_x, PADDLE_WIDTH, BALL_VELOCITY, ball_direction_x, ball_direction_y
 
+    # dont do anything if game hasn't started
     if not game_started:
         return
     
-    ball_x += ball_direction_x*ball_velocity
-    ball_y += ball_direction_y*ball_velocity
+    # move the ball by updating its x and y coordinates
+    ball_x += ball_direction_x*BALL_VELOCITY
+    ball_y += ball_direction_y*BALL_VELOCITY
 
-    #if ball touches paddle
-    if ball_x-ball_radius == right_paddle_x-paddle_width and right_paddle_y<=ball_y<=right_paddle_y+paddle_height:
+    # check if ball touches right paddle
+    if ball_x-BALL_RADIUS == right_paddle_x-PADDLE_WIDTH and right_paddle_y<=ball_y<=right_paddle_y+PADDLE_HEIGHT:
         print(ball_x)
         ball_direction_x*=-1
 
-    if ball_x-ball_radius == left_paddle_x+paddle_width and left_paddle_y<=ball_y<=left_paddle_y+paddle_height:
+    # check if ball touches left paddle
+    if ball_x-BALL_RADIUS == left_paddle_x+PADDLE_WIDTH and left_paddle_y<=ball_y<=left_paddle_y+PADDLE_HEIGHT:
         print(ball_x)
         ball_direction_x*=-1
 
-    #if ball touches up or down walls
-    if ball_y+ball_radius == screen_height:
+    # check if ball touches up or down walls
+    if ball_y+BALL_RADIUS == SCREEN_HEIGHT:
         ball_direction_y*=-1
 
-    if ball_y-ball_radius == 0:
+    if ball_y-BALL_RADIUS == 0:
         ball_direction_y*=-1
 
     #if ball touches left or right walls
-    if ball_x+ball_radius == screen_width:
+    if ball_x+BALL_RADIUS == SCREEN_WIDTH:
         end_game()
 
-    if ball_x-ball_radius == 0:
+    if ball_x-BALL_RADIUS == 0:
         end_game()
-
 
 def draw_paddles():
-    global screen_width, screen_height, paddle_height, paddle_width, right_paddle_x, right_paddle_y, left_paddle_x, left_paddle_y, right_up, right_down, left_up, left_down
+    global SCREEN_WIDTH, SCREEN_HEIGHT, PADDLE_HEIGHT, PADDLE_WIDTH, right_paddle_x, right_paddle_y, left_paddle_x, left_paddle_y, right_up, right_down, left_up, left_down
 
     set_fill_color(1, 1, 1)
 
-    draw_rectangle(left_paddle_x, left_paddle_y, paddle_width, paddle_height)
-    draw_rectangle(right_paddle_x, right_paddle_y, paddle_width, paddle_height)    
+    # draw left paddle
+    draw_rectangle(left_paddle_x, left_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT)
+
+    # draw right paddle
+    draw_rectangle(right_paddle_x, right_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT)    
 
 def move_paddles():
-    global left_down, left_up, right_down, right_up, left_paddle_y, right_paddle_y, paddle_height, paddle_movement_height
+    global left_down, left_up, right_down, right_up, left_paddle_y, right_paddle_y, PADDLE_HEIGHT, PADDLE_MOVEMENT_HEIGHT
 
+    # move left paddle up
     if left_up and left_paddle_y>=0:
-        left_paddle_y-=paddle_movement_height
+        left_paddle_y-=PADDLE_MOVEMENT_HEIGHT
 
-    if left_down and left_paddle_y<=screen_height-paddle_height-paddle_movement_height:
-        left_paddle_y+=paddle_movement_height
+    # move left paddle down
+    if left_down and left_paddle_y<=SCREEN_HEIGHT-PADDLE_HEIGHT-PADDLE_MOVEMENT_HEIGHT:
+        left_paddle_y+=PADDLE_MOVEMENT_HEIGHT
 
+    # move right paddle up
     if right_up and right_paddle_y>=0:
-        right_paddle_y-=paddle_movement_height
+        right_paddle_y-=PADDLE_MOVEMENT_HEIGHT
 
-    if right_down and right_paddle_y<=screen_height-paddle_height-paddle_movement_height:
-        right_paddle_y+=paddle_movement_height
+    # move right paddle down
+    if right_down and right_paddle_y<=SCREEN_HEIGHT-PADDLE_HEIGHT-PADDLE_MOVEMENT_HEIGHT:
+        right_paddle_y+=PADDLE_MOVEMENT_HEIGHT
 
 def handle_paddle_movements(key_pressed):
     global left_down, left_up, right_down, right_up
 
-    if key_pressed == "a":
+    if key_pressed == UP_LEFT_KEY:
         left_up = True
     
-    if key_pressed == "z":
+    if key_pressed == DOWN_LEFT_KEY:
         left_down = True
 
-    if key_pressed == "k":
+    if key_pressed == UP_RIGHT_KEY:
         right_up = True
     
-    if key_pressed == "m":
+    if key_pressed == DOWN_RIGHT_KEY:
         right_down = True
 
 def start_game():
     global game_started, show_text
     show_text = False
-    #some sort of countdown
-
     game_started = True
 
 def end_game():
-    global game_started, show_text,ball_x, ball_y, screen_width, screen_height, left_paddle_x, left_paddle_y, right_paddle_y, right_paddle_x
+    global game_started, show_text,ball_x, ball_y, SCREEN_WIDTH, SCREEN_HEIGHT, left_paddle_x, left_paddle_y, right_paddle_y, right_paddle_x, BALL_VELOCITY
 
-    ball_y = screen_height/2
-    ball_x = screen_width/2
+    ball_y = SCREEN_HEIGHT/2
+    ball_x = SCREEN_WIDTH/2
     
     left_paddle_x = 0
     left_paddle_y = 0
 
-    right_paddle_x = screen_width - paddle_width
-    right_paddle_y = screen_height - paddle_height
+    right_paddle_x = SCREEN_WIDTH - PADDLE_WIDTH
+    right_paddle_y = SCREEN_HEIGHT - PADDLE_HEIGHT
 
     show_text = True
-
     game_started = False
 
 def handle_key_press(key_pressed):
-    global screen_height, left_paddle_y, right_paddle_y, game_started
+    global SCREEN_HEIGHT, left_paddle_y, right_paddle_y, game_started
 
     if game_started:
         handle_paddle_movements(key_pressed)
@@ -164,23 +178,19 @@ def handle_key_press(key_pressed):
     if key_pressed == " ":
         start_game()
 
-    if key_pressed == "o":
-        end_game()
-
 def handle_key_release(key_released):
-
     global left_down, left_up, right_down, right_up
 
-    if key_released == "a":
+    if key_released == UP_LEFT_KEY:
         left_up = False
     
-    if key_released == "z":
+    if key_released == DOWN_LEFT_KEY:
         left_down = False
 
-    if key_released == "k":
+    if key_released == UP_RIGHT_KEY:
         right_up = False
     
-    if key_released == "m":
+    if key_released == DOWN_RIGHT_KEY:
         right_down = False
 
-start_graphics(main_draw, width=screen_width, height=screen_height, key_press=handle_key_press, key_release=handle_key_release)
+start_graphics(main_draw, width=SCREEN_WIDTH, height=SCREEN_HEIGHT, key_press=handle_key_press, key_release=handle_key_release)
